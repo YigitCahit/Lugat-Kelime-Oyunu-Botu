@@ -35,12 +35,12 @@ class WordGameCog(commands.Cog):
 
         if interaction.response.is_done():
             await interaction.followup.send(
-                "Bu komut yalnizca sunucularda kullanilabilir.",
+                "Bu komut yalnızca sunucularda kullanılabilir.",
                 ephemeral=True,
             )
         else:
             await interaction.response.send_message(
-                "Bu komut yalnizca sunucularda kullanilabilir.",
+                "Bu komut yalnızca sunucularda kullanılabilir.",
                 ephemeral=True,
             )
         return False
@@ -55,7 +55,7 @@ class WordGameCog(commands.Cog):
         if interaction.user.guild_permissions.manage_guild:
             return True
 
-        message = "Bu komut icin 'Sunucuyu Yonet' izni gerekiyor."
+        message = "Bu komut için 'Sunucuyu Yönet' izni gerekiyor."
         if interaction.response.is_done():
             await interaction.followup.send(message, ephemeral=True)
         else:
@@ -88,20 +88,20 @@ class WordGameCog(commands.Cog):
         channel_display = (
             f"<#{settings['game_channel_id']}>"
             if settings["game_channel_id"]
-            else "Ayarlanmadi"
+            else "Ayarlanmadı"
         )
 
         return (
             f"Kanal: {channel_display}\n"
-            f"Yanlis kelime silme: {'Acik' if settings['delete_wrong_words'] else 'Kapali'}\n"
-            f"Uyari mesaji: {'Acik' if settings['send_warning'] else 'Kapali'}\n"
-            f"Dogru kelime reaksiyonu: {'Acik' if settings['react_correct_words'] else 'Kapali'}\n"
-            f"Kacis karakteri: {settings['escape_prefix']}\n"
+            f"Yanlış kelime silme: {'Açık' if settings['delete_wrong_words'] else 'Kapalı'}\n"
+            f"Uyarı mesajı: {'Açık' if settings['send_warning'] else 'Kapalı'}\n"
+            f"Doğru kelime reaksiyonu: {'Açık' if settings['react_correct_words'] else 'Kapalı'}\n"
+            f"Kaçış karakteri: {settings['escape_prefix']}\n"
             f"Reaksiyon emojisi: {settings['reaction_emoji']}\n"
-            f"Kelime puani: {settings['points_per_word']}\n"
-            f"Seviye atlama puani: {settings['level_up_points']}\n"
-            f"Sifirlama kelime sayisi: {settings['reset_after_words']}\n"
-            f"Ayni kisi arka arkaya oynayabilir: {'Evet' if settings['allow_consecutive_turns'] else 'Hayir'}"
+            f"Kelime puanı: {settings['points_per_word']}\n"
+            f"Seviye atlama puanı: {settings['level_up_points']}\n"
+            f"Sıfırlama kelime sayısı: {settings['reset_after_words']}\n"
+            f"Aynı kişi arka arkaya oynayabilir: {'Evet' if settings['allow_consecutive_turns'] else 'Hayır'}"
         )
 
     async def _publish_round_results_and_reset(
@@ -114,13 +114,13 @@ class WordGameCog(commands.Cog):
         rows = await self.db.get_round_leaderboard(guild.id, round_id, limit=10)
 
         embed = discord.Embed(
-            title=f"Tur {round_id} Sonuclari",
-            description=f"{trigger_text}\nTur bitti, yeni tur basladi.",
+            title=f"Tur {round_id} Sonuçları",
+            description=f"{trigger_text}\nTur bitti, yeni tur başladı.",
             color=discord.Color.gold(),
         )
 
         if not rows:
-            embed.add_field(name="Durum", value="Bu turda gecerli kelime oynanmadi.")
+            embed.add_field(name="Durum", value="Bu turda geçerli kelime oynanmadı.")
         else:
             lines: list[str] = []
             for index, row in enumerate(rows, start=1):
@@ -138,9 +138,9 @@ class WordGameCog(commands.Cog):
         starter_word = self.word_bank.random_word()
         await self.db.seed_round_with_word(guild.id, starter_word)
         await target_channel.send(
-            "Yeni turun baslangic kelimesi: "
+            "Yeni turun başlangıç kelimesi: "
             f"**{starter_word}**\n"
-            f"Siradaki kelime '{starter_word[-1]}' harfi ile baslamali."
+            f"Sıradaki kelime '{starter_word[-1]}' harfi ile başlamalı."
         )
 
     async def _process_message(self, message: discord.Message) -> None:
@@ -166,7 +166,7 @@ class WordGameCog(commands.Cog):
             await self._handle_invalid_word(
                 message,
                 settings,
-                "Lutfen sadece tek kelime yaz ve en az 2 harf kullan.",
+                "Lütfen sadece tek kelime yaz ve en az 2 harf kullan.",
             )
             return
 
@@ -175,7 +175,7 @@ class WordGameCog(commands.Cog):
             await self._handle_invalid_word(
                 message,
                 settings,
-                f"Kelime '{expected}' harfi ile baslamali.",
+                f"Kelime '{expected}' harfi ile başlamalı.",
             )
             return
 
@@ -187,7 +187,7 @@ class WordGameCog(commands.Cog):
             await self._handle_invalid_word(
                 message,
                 settings,
-                "Ayni kullanici arka arkaya oynayamaz.",
+                "Aynı kullanıcı arka arkaya oynayamaz.",
             )
             return
 
@@ -195,7 +195,7 @@ class WordGameCog(commands.Cog):
             await self._handle_invalid_word(
                 message,
                 settings,
-                "Bu kelime listede bulunamadi.",
+                "Bu kelime listede bulunamadı.",
             )
             return
 
@@ -203,7 +203,7 @@ class WordGameCog(commands.Cog):
             await self._handle_invalid_word(
                 message,
                 settings,
-                "Bu kelime bu turda zaten kullanildi.",
+                "Bu kelime bu turda zaten kullanıldı.",
             )
             return
 
@@ -225,7 +225,7 @@ class WordGameCog(commands.Cog):
         if int(result["level_ups"]) > 0:
             try:
                 await message.channel.send(
-                    f"{message.author.mention} seviye atladi! Yeni seviye: {result['level']}"
+                    f"{message.author.mention} seviye atladı! Yeni seviye: {result['level']}"
                 )
             except (discord.Forbidden, discord.HTTPException):
                 pass
@@ -235,7 +235,7 @@ class WordGameCog(commands.Cog):
                 guild=message.guild,
                 target_channel=message.channel,
                 round_id=int(result["round_id"]),
-                trigger_text="Maksimum kelime sayisina ulasildi.",
+                trigger_text="Maksimum kelime sayısına ulaşıldı.",
             )
 
     @commands.Cog.listener()
@@ -248,11 +248,11 @@ class WordGameCog(commands.Cog):
             try:
                 await self._process_message(message)
             except Exception:
-                LOGGER.exception("Mesaj islenirken hata olustu.")
+                LOGGER.exception("Mesaj işlenirken hata oluştu.")
 
     @app_commands.command(
         name="ayar_goster",
-        description="Sunucu kelime oyunu ayarlarini gosterir.",
+        description="Sunucu kelime oyunu ayarlarını gösterir.",
     )
     async def ayar_goster(self, interaction: discord.Interaction) -> None:
         if not await self._ensure_guild_interaction(interaction):
@@ -260,7 +260,7 @@ class WordGameCog(commands.Cog):
 
         settings = await self.db.get_settings(interaction.guild_id)
         embed = discord.Embed(
-            title="Kelime Oyunu Ayarlari",
+            title="Kelime Oyunu Ayarları",
             description=self._format_settings(settings),
             color=discord.Color.blurple(),
         )
@@ -268,9 +268,9 @@ class WordGameCog(commands.Cog):
 
     @app_commands.command(
         name="ayar_kanal",
-        description="Oyunun oynanacagi kanali ayarlar.",
+        description="Oyunun oynanacağı kanalı ayarlar.",
     )
-    @app_commands.describe(kanal="Kelime oyununun oynanacagi kanal")
+    @app_commands.describe(kanal="Kelime oyununun oynanacağı kanal")
     async def ayar_kanal(
         self,
         interaction: discord.Interaction,
@@ -281,15 +281,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "game_channel_id", kanal.id)
         await interaction.response.send_message(
-            f"Oyun kanali {kanal.mention} olarak ayarlandi.",
+            f"Oyun kanalı {kanal.mention} olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_yanlis_sil",
-        description="Yanlis kelimelerin silinmesini acar veya kapatir.",
+        description="Yanlış kelimelerin silinmesini açar veya kapatır.",
     )
-    @app_commands.describe(aktif="Acik ise yanlis kelime mesaji silinir")
+    @app_commands.describe(aktif="Açık ise yanlış kelime mesajı silinir")
     async def ayar_yanlis_sil(
         self,
         interaction: discord.Interaction,
@@ -300,15 +300,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "delete_wrong_words", int(aktif))
         await interaction.response.send_message(
-            f"Yanlis kelime silme {'acildi' if aktif else 'kapatildi'}.",
+            f"Yanlış kelime silme {'açıldı' if aktif else 'kapatıldı'}.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_uyari",
-        description="Yanlis kelimelerde uyari gonderimini acar veya kapatir.",
+        description="Yanlış kelimelerde uyarı gönderimini açar veya kapatır.",
     )
-    @app_commands.describe(aktif="Acik ise hata nedenini yazan uyari gonderilir")
+    @app_commands.describe(aktif="Açık ise hata nedenini yazan uyarı gönderilir")
     async def ayar_uyari(
         self,
         interaction: discord.Interaction,
@@ -319,15 +319,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "send_warning", int(aktif))
         await interaction.response.send_message(
-            f"Uyari mesaji {'acildi' if aktif else 'kapatildi'}.",
+            f"Uyarı mesajı {'açıldı' if aktif else 'kapatıldı'}.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_dogru_reaksiyon",
-        description="Dogru kelimelere reaksiyon birakmayi acar veya kapatir.",
+        description="Doğru kelimelere reaksiyon bırakmayı açar veya kapatır.",
     )
-    @app_commands.describe(aktif="Acik ise dogru kelime mesajina reaksiyon birakilir")
+    @app_commands.describe(aktif="Açık ise doğru kelime mesajına reaksiyon bırakılır")
     async def ayar_dogru_reaksiyon(
         self,
         interaction: discord.Interaction,
@@ -342,15 +342,15 @@ class WordGameCog(commands.Cog):
             int(aktif),
         )
         await interaction.response.send_message(
-            f"Dogru kelime reaksiyonu {'acildi' if aktif else 'kapatildi'}.",
+            f"Doğru kelime reaksiyonu {'açıldı' if aktif else 'kapatıldı'}.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_reaksiyon_emoji",
-        description="Dogru kelimelere birakilacak emojiyi belirler.",
+        description="Doğru kelimelere bırakılacak emojiyi belirler.",
     )
-    @app_commands.describe(emoji="Ornek: ✅ veya <:ozel:1234567890>")
+    @app_commands.describe(emoji="Örnek: ✅ veya <:ozel:1234567890>")
     async def ayar_reaksiyon_emoji(
         self,
         interaction: discord.Interaction,
@@ -361,15 +361,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "reaction_emoji", emoji)
         await interaction.response.send_message(
-            f"Reaksiyon emojisi {emoji} olarak ayarlandi.",
+            f"Reaksiyon emojisi {emoji} olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_kacis_karakteri",
-        description="Oyun disi mesajlar icin kacis karakterini ayarlar.",
+        description="Oyun dışı mesajlar için kaçış karakterini ayarlar.",
     )
-    @app_commands.describe(karakter="Ornek: \\ veya !")
+    @app_commands.describe(karakter="Örnek: \\ veya !")
     async def ayar_kacis_karakteri(
         self,
         interaction: discord.Interaction,
@@ -380,22 +380,22 @@ class WordGameCog(commands.Cog):
 
         if karakter.isspace():
             await interaction.response.send_message(
-                "Kacis karakteri bosluk olamaz.",
+                "Kaçış karakteri boşluk olamaz.",
                 ephemeral=True,
             )
             return
 
         await self.db.update_setting(interaction.guild_id, "escape_prefix", karakter)
         await interaction.response.send_message(
-            f"Kacis karakteri {karakter} olarak ayarlandi.",
+            f"Kaçış karakteri {karakter} olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_kelime_puani",
-        description="Dogru kelime basina verilen puani ayarlar.",
+        description="Doğru kelime başına verilen puanı ayarlar.",
     )
-    @app_commands.describe(puan="Her dogru kelimenin puani")
+    @app_commands.describe(puan="Her doğru kelimenin puanı")
     async def ayar_kelime_puani(
         self,
         interaction: discord.Interaction,
@@ -406,15 +406,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "points_per_word", int(puan))
         await interaction.response.send_message(
-            f"Kelime puani {puan} olarak ayarlandi.",
+            f"Kelime puanı {puan} olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_seviye_puani",
-        description="Seviye atlamak icin gereken puani ayarlar.",
+        description="Seviye atlamak için gereken puanı ayarlar.",
     )
-    @app_commands.describe(puan="Bir seviye yukselmek icin gereken puan")
+    @app_commands.describe(puan="Bir seviye yükselmek için gereken puan")
     async def ayar_seviye_puani(
         self,
         interaction: discord.Interaction,
@@ -425,15 +425,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "level_up_points", int(puan))
         await interaction.response.send_message(
-            f"Seviye atlama puani {puan} olarak ayarlandi.",
+            f"Seviye atlama puanı {puan} olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_sifirlama_kelimesi",
-        description="Kac kelime sonra turun sifirlanacagini ayarlar.",
+        description="Kaç kelime sonra turun sıfırlanacağını ayarlar.",
     )
-    @app_commands.describe(adet="Tur bitisindeki toplam kelime sayisi")
+    @app_commands.describe(adet="Tur bitişindeki toplam kelime sayısı")
     async def ayar_sifirlama_kelimesi(
         self,
         interaction: discord.Interaction,
@@ -444,15 +444,15 @@ class WordGameCog(commands.Cog):
 
         await self.db.update_setting(interaction.guild_id, "reset_after_words", int(adet))
         await interaction.response.send_message(
-            f"Tur sifirlama siniri {adet} kelime olarak ayarlandi.",
+            f"Tur sıfırlama sınırı {adet} kelime olarak ayarlandı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="ayar_ardisik_oyun",
-        description="Ayni kisinin ust uste oynamasini acar veya kapatir.",
+        description="Aynı kişinin üst üste oynamasını açar veya kapatır.",
     )
-    @app_commands.describe(aktif="Acik ise ayni kullanici ust uste oynayabilir")
+    @app_commands.describe(aktif="Açık ise aynı kullanıcı üst üste oynayabilir")
     async def ayar_ardisik_oyun(
         self,
         interaction: discord.Interaction,
@@ -467,13 +467,13 @@ class WordGameCog(commands.Cog):
             int(aktif),
         )
         await interaction.response.send_message(
-            f"Ardisik oyun {'acildi' if aktif else 'kapatildi'}.",
+            f"Ardışık oyun {'açıldı' if aktif else 'kapatıldı'}.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="oyun_durum",
-        description="Aktif turun durumunu gosterir.",
+        description="Aktif turun durumunu gösterir.",
     )
     async def oyun_durum(self, interaction: discord.Interaction) -> None:
         if not await self._ensure_guild_interaction(interaction):
@@ -485,7 +485,7 @@ class WordGameCog(commands.Cog):
         channel_text = (
             f"<#{settings['game_channel_id']}>"
             if settings["game_channel_id"]
-            else "Ayarlanmadi"
+            else "Ayarlanmadı"
         )
         expected = state["expected_start_char"] or "Serbest"
 
@@ -493,12 +493,12 @@ class WordGameCog(commands.Cog):
         embed.add_field(name="Kanal", value=channel_text, inline=False)
         embed.add_field(name="Tur", value=str(state["current_round"]), inline=True)
         embed.add_field(name="Turdaki Kelime", value=str(state["words_in_round"]), inline=True)
-        embed.add_field(name="Beklenen Bas Harf", value=str(expected), inline=True)
+        embed.add_field(name="Beklenen Baş Harf", value=str(expected), inline=True)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(
         name="oyun_sifirla",
-        description="Mevcut turu bitirir ve liderligi yayinlayarak yeni tur baslatir.",
+        description="Mevcut turu bitirir ve liderliği yayınlayarak yeni tur başlatır.",
     )
     async def oyun_sifirla(self, interaction: discord.Interaction) -> None:
         if not await self._ensure_manage_guild(interaction):
@@ -522,7 +522,7 @@ class WordGameCog(commands.Cog):
 
         if target_channel is None:
             await interaction.response.send_message(
-                "Liderlik tablosunu yayinlamak icin uygun bir yazi kanali bulunamadi.",
+                "Liderlik tablosunu yayınlamak için uygun bir yazı kanalı bulunamadı.",
                 ephemeral=True,
             )
             return
@@ -534,19 +534,19 @@ class WordGameCog(commands.Cog):
                 guild=guild,
                 target_channel=target_channel,
                 round_id=state["current_round"],
-                trigger_text=f"Tur bir yonetici tarafindan sifirlandi ({interaction.user.mention}).",
+                trigger_text=f"Tur bir yönetici tarafından sıfırlandı ({interaction.user.mention}).",
             )
 
         await interaction.response.send_message(
-            f"Tur sifirlandi ve liderlik tablosu {target_channel.mention} kanalinda paylasildi.",
+            f"Tur sıfırlandı ve liderlik tablosu {target_channel.mention} kanalında paylaşıldı.",
             ephemeral=True,
         )
 
     @app_commands.command(
         name="seviye",
-        description="Kendi seviye ve puan bilgini gosterir (sadece sana gorunur).",
+        description="Kendi seviye ve puan bilgini gösterir (sadece sana görünür).",
     )
-    @app_commands.describe(kullanici="Istersen baska bir kullanicinin bilgisini de gorebilirsin")
+    @app_commands.describe(kullanici="İstersen başka bir kullanıcının bilgisini de görebilirsin")
     async def seviye(
         self,
         interaction: discord.Interaction,
@@ -570,26 +570,26 @@ class WordGameCog(commands.Cog):
         embed.add_field(name="Toplam Puan", value=str(profile["total_points"]), inline=True)
         embed.add_field(name="Toplam Kelime", value=str(profile["total_words"]), inline=True)
         embed.add_field(
-            name="Seviye Ilerlemesi",
+            name="Seviye İlerlemesi",
             value=f"{profile['level_progress']} / {settings['level_up_points']}",
             inline=False,
         )
-        embed.add_field(name="Puan Sirasi", value=f"#{profile['points_rank']}", inline=True)
-        embed.add_field(name="Seviye Sirasi", value=f"#{profile['level_rank']}", inline=True)
+        embed.add_field(name="Puan Sırası", value=f"#{profile['points_rank']}", inline=True)
+        embed.add_field(name="Seviye Sırası", value=f"#{profile['level_rank']}", inline=True)
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @app_commands.command(
         name="liderlik",
-        description="Sunucu liderlik tablosunu gosterir.",
+        description="Sunucu liderlik tablosunu gösterir.",
     )
     @app_commands.describe(tur="Liderlik tablosu turu")
     @app_commands.choices(
         tur=[
             app_commands.Choice(name="Toplam Puan", value="puan"),
             app_commands.Choice(name="Seviye", value="seviye"),
-            app_commands.Choice(name="Gunluk", value="gunluk"),
-            app_commands.Choice(name="Haftalik", value="haftalik"),
+            app_commands.Choice(name="Günlük", value="gunluk"),
+            app_commands.Choice(name="Haftalık", value="haftalik"),
         ]
     )
     async def liderlik(
@@ -608,10 +608,10 @@ class WordGameCog(commands.Cog):
         )
 
         titles = {
-            "puan": "Toplam Puan Liderligi",
-            "seviye": "Seviye Liderligi",
-            "gunluk": "Gunluk Liderlik (24 Saat)",
-            "haftalik": "Haftalik Liderlik (7 Gun)",
+            "puan": "Toplam Puan Liderliği",
+            "seviye": "Seviye Liderliği",
+            "gunluk": "Günlük Liderlik (24 Saat)",
+            "haftalik": "Haftalık Liderlik (7 Gün)",
         }
 
         embed = discord.Embed(
@@ -620,7 +620,7 @@ class WordGameCog(commands.Cog):
         )
 
         if not rows:
-            embed.description = "Henuz veri yok."
+            embed.description = "Henüz veri yok."
         else:
             lines: list[str] = []
             for index, row in enumerate(rows, start=1):
@@ -640,16 +640,16 @@ class WordGameCog(commands.Cog):
 
             embed.description = "\n".join(lines)
 
-        # Seviye komutlarini sadece komutu kullanan kisi gorur.
+        # Seviye komutlarını sadece komutu kullanan kişi görür.
         ephemeral = board_type == "seviye"
         await interaction.response.send_message(embed=embed, ephemeral=ephemeral)
 
     @app_commands.command(
         name="yardim",
-        description="Kelime oyunu komutlarinin kisa ozetini gosterir.",
+        description="Kelime oyunu komutlarının kısa özetini gösterir.",
     )
     async def yardim(self, interaction: discord.Interaction) -> None:
-        embed = discord.Embed(title="Kelime Oyunu Yardim", color=discord.Color.teal())
+        embed = discord.Embed(title="Kelime Oyunu Yardım", color=discord.Color.teal())
         embed.description = (
             "Temel komutlar:\n"
             "- /ayar_goster\n"
@@ -687,10 +687,10 @@ class KelimeBot(commands.Bot):
         await self.db.initialize_schema()
         await self.add_cog(WordGameCog(self, self.db, self.word_bank))
         await self.tree.sync()
-        LOGGER.info("Slash komutlari senkronize edildi.")
+        LOGGER.info("Slash komutları senkronize edildi.")
 
     async def on_ready(self) -> None:
-        LOGGER.info("Bot hazir: %s", self.user)
+        LOGGER.info("Bot hazır: %s", self.user)
 
     async def close(self) -> None:
         await self.db.close()
