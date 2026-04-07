@@ -134,6 +134,13 @@ class WordGameCog(commands.Cog):
 
         await target_channel.send(embed=embed)
         await self.db.reset_round(guild.id)
+        starter_word = self.word_bank.random_word()
+        await self.db.seed_round_with_word(guild.id, starter_word)
+        await target_channel.send(
+            "Yeni turun baslangic kelimesi: "
+            f"**{starter_word}**\n"
+            f"Siradaki kelime '{starter_word[-1]}' harfi ile baslamali."
+        )
 
     async def _process_message(self, message: discord.Message) -> None:
         if message.guild is None:

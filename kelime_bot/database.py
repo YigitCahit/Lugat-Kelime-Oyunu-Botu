@@ -367,6 +367,57 @@ class Database:
 
         return new_round
 
+    async def seed_round_with_word(self, guild_id: int, word: str) -> dict[str, Any]:
+        await self.ensure_guild(guild_id)
+        pool = self._require_pool()
+
+        async with pool.acquire() as conn:
+            try:
+                await conn.begin()
+                async with conn.cursor(aiomysql.DictCursor) as cursor:
+                    await cursor.execute(
+                        "SELECT current_round, words_in_round FROM game_state WHERE guild_id = %s FOR UPDATE",
+                        (guild_id,),
+                    )
+                    state = await cursor.fetchone()
+                    if state is None:
+                        raise RuntimeError("Oyun durumu bulunamadi.")
+
+                    if int(state["words_in_round"]) > 0:
+                        raise ValueError("Tur zaten baslamis durumda.")
+
+                    round_id = int(state["current_round"])
+
+                    await cursor.execute(
+                        """
+                        INSERT INTO word_entries (guild_id, round_id, user_id, word, points)
+                        VALUES (%s, %s, 0, %s, 0)
+                        """,
+                        (guild_id, round_id, word),
+                    )
+
+                    await cursor.execute(
+                        """
+                        UPDATE game_state
+                        SET words_in_round = 0,
+                            expected_start_char = %s,
+                            last_word = %s,
+                            last_player_id = NULL
+                        WHERE guild_id = %s
+                        """,
+                        (word[-1], word, guild_id),
+                    )
+
+                await conn.commit()
+            except Exception:
+                await conn.rollback()
+                raise
+
+        return {
+            "round_id": round_id,
+            "expected_start_char": word[-1],
+        }
+
     async def get_round_leaderboard(
         self,
         guild_id: int,
@@ -377,7 +428,7 @@ class Database:
             """
             SELECT user_id, SUM(points) AS points, COUNT(*) AS words
             FROM word_entries
-            WHERE guild_id = %s AND round_id = %s
+            WHERE guild_id = %s AND round_id = %s AND user_id <> 0
             GROUP BY user_id
             ORDER BY points DESC, words DESC, user_id ASC
             LIMIT %s
@@ -421,6 +472,7 @@ class Database:
                 SELECT user_id, SUM(points) AS points, COUNT(*) AS words
                 FROM word_entries
                 WHERE guild_id = %s
+                                    AND user_id <> 0
                   AND created_at >= UTC_TIMESTAMP() - INTERVAL 1 DAY
                 GROUP BY user_id
                 ORDER BY points DESC, words DESC, user_id ASC
@@ -435,6 +487,7 @@ class Database:
                 SELECT user_id, SUM(points) AS points, COUNT(*) AS words
                 FROM word_entries
                 WHERE guild_id = %s
+                                    AND user_id <> 0
                   AND created_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY
                 GROUP BY user_id
                 ORDER BY points DESC, words DESC, user_id ASC
