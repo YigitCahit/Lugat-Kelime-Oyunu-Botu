@@ -96,6 +96,7 @@ class WordGameCog(commands.Cog):
             f"Yanlis kelime silme: {'Acik' if settings['delete_wrong_words'] else 'Kapali'}\n"
             f"Uyari mesaji: {'Acik' if settings['send_warning'] else 'Kapali'}\n"
             f"Dogru kelime reaksiyonu: {'Acik' if settings['react_correct_words'] else 'Kapali'}\n"
+            f"Kacis karakteri: {settings['escape_prefix']}\n"
             f"Reaksiyon emojisi: {settings['reaction_emoji']}\n"
             f"Kelime puani: {settings['points_per_word']}\n"
             f"Seviye atlama puani: {settings['level_up_points']}\n"
@@ -147,6 +148,12 @@ class WordGameCog(commands.Cog):
             return
 
         settings = await self.db.get_settings(message.guild.id)
+        escape_prefix = str(settings["escape_prefix"]).strip()
+
+        # Allow non-game chatter in the game channel via an escape prefix.
+        if escape_prefix and message.content.strip().startswith(escape_prefix):
+            return
+
         game_channel_id = settings["game_channel_id"]
 
         if game_channel_id is None or message.channel.id != game_channel_id:
@@ -355,6 +362,32 @@ class WordGameCog(commands.Cog):
         await self.db.update_setting(interaction.guild_id, "reaction_emoji", emoji)
         await interaction.response.send_message(
             f"Reaksiyon emojisi {emoji} olarak ayarlandi.",
+            ephemeral=True,
+        )
+
+    @app_commands.command(
+        name="ayar_kacis_karakteri",
+        description="Oyun disi mesajlar icin kacis karakterini ayarlar.",
+    )
+    @app_commands.describe(karakter="Ornek: \\ veya !")
+    async def ayar_kacis_karakteri(
+        self,
+        interaction: discord.Interaction,
+        karakter: app_commands.Range[str, 1, 1],
+    ) -> None:
+        if not await self._ensure_manage_guild(interaction):
+            return
+
+        if karakter.isspace():
+            await interaction.response.send_message(
+                "Kacis karakteri bosluk olamaz.",
+                ephemeral=True,
+            )
+            return
+
+        await self.db.update_setting(interaction.guild_id, "escape_prefix", karakter)
+        await interaction.response.send_message(
+            f"Kacis karakteri {karakter} olarak ayarlandi.",
             ephemeral=True,
         )
 
@@ -625,6 +658,7 @@ class WordGameCog(commands.Cog):
             "- /ayar_uyari\n"
             "- /ayar_dogru_reaksiyon\n"
             "- /ayar_reaksiyon_emoji\n"
+            "- /ayar_kacis_karakteri\n"
             "- /ayar_kelime_puani\n"
             "- /ayar_seviye_puani\n"
             "- /ayar_sifirlama_kelimesi\n"

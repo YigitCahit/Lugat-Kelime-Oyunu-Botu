@@ -47,6 +47,7 @@ class Database:
                 delete_wrong_words BOOLEAN NOT NULL DEFAULT TRUE,
                 send_warning BOOLEAN NOT NULL DEFAULT TRUE,
                 react_correct_words BOOLEAN NOT NULL DEFAULT TRUE,
+                escape_prefix VARCHAR(8) NOT NULL DEFAULT '\\\\',
                 reaction_emoji VARCHAR(64) NOT NULL DEFAULT '✅',
                 points_per_word INT NOT NULL DEFAULT 5,
                 level_up_points INT NOT NULL DEFAULT 100,
@@ -103,6 +104,18 @@ class Database:
                 for statement in statements:
                     await cursor.execute(statement)
 
+                # Backward-compatible migration for deployments created before escape_prefix existed.
+                await cursor.execute("SHOW COLUMNS FROM guild_settings LIKE 'escape_prefix'")
+                column = await cursor.fetchone()
+                if column is None:
+                    await cursor.execute(
+                        """
+                        ALTER TABLE guild_settings
+                        ADD COLUMN escape_prefix VARCHAR(8) NOT NULL DEFAULT '\\\\'
+                        AFTER react_correct_words
+                        """
+                    )
+
     async def _fetchone(self, query: str, params: tuple[Any, ...] = ()) -> dict[str, Any] | None:
         pool = self._require_pool()
         async with pool.acquire() as conn:
@@ -149,6 +162,7 @@ class Database:
             "delete_wrong_words": bool(row["delete_wrong_words"]),
             "send_warning": bool(row["send_warning"]),
             "react_correct_words": bool(row["react_correct_words"]),
+            "escape_prefix": str(row.get("escape_prefix") or "\\"),
             "reaction_emoji": str(row["reaction_emoji"]),
             "points_per_word": int(row["points_per_word"]),
             "level_up_points": int(row["level_up_points"]),
@@ -162,6 +176,7 @@ class Database:
             "delete_wrong_words",
             "send_warning",
             "react_correct_words",
+            "escape_prefix",
             "reaction_emoji",
             "points_per_word",
             "level_up_points",

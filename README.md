@@ -13,6 +13,7 @@ Kurallar:
 - Yanlis kelime mesajini silme (opsiyonel)
 - Yanlis kelime uyarisi gonderme (opsiyonel)
 - Dogru kelimeye reaksiyon birakma (opsiyonel)
+- Oyun disi mesajlar icin kacis karakteri ozellestirme
 - Reaksiyon emojisi ozellestirme
 - Kelime basina puan ayari
 - Seviye atlama puan esigi ayari
@@ -69,6 +70,7 @@ python main.py
 - `/ayar_uyari`
 - `/ayar_dogru_reaksiyon`
 - `/ayar_reaksiyon_emoji`
+- `/ayar_kacis_karakteri`
 - `/ayar_kelime_puani`
 - `/ayar_seviye_puani`
 - `/ayar_sifirlama_kelimesi`
@@ -90,3 +92,5 @@ python main.py
 - Kelime listeleri `Kelime-Listesi` klasorundeki `.list` ve `.txt` dosyalarindan yuklenir.
 - Her sunucunun ayarlari ve istatistikleri birbirinden bagimsiz tutulur.
 - Tur sifirlamada o turun liderligi herkese acik olarak duyurulur.
+- Oyun kanalinda bir mesaji oyuna dahil etmeden yazmak icin mesajin basina kacis karakterini ekleyebilirsin.
+- Varsayilan kacis karakteri `\\` olup `/ayar_kacis_karakteri` ile degistirilebilir.
