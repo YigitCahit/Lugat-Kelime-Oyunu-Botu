@@ -1,49 +1,56 @@
-# Discord Kelime Oyunu Botu (Python + MySQL)
+# Lügat - Discord Kelime Oyunu Botu (Python + MySQL)
 
-Bu bot, sunucu bazli ayarlara sahip bir Discord kelime oyunu sunar.
+Lügat, sunucu bazlı ayarlara sahip bir Discord kelime oyunu botudur.
+
 Kurallar:
-- Son kelimenin son harfi ile baslayan kelime yazilir.
+- Son kelimenin son harfi ile başlayan kelime yazılır.
 - Sadece tek kelime kabul edilir.
-- Girilen kelime otomatik kucuk harfe cevrilir.
+- Girilen kelime otomatik küçük harfe çevrilir.
 - En az 2 harfli kelimeler kabul edilir.
 
-## Ozellikler
+## Bağlantılar
 
-- Sunucuya ozel ayarlar
-- Yanlis kelime mesajini silme (opsiyonel)
-- Yanlis kelime uyarisi gonderme (opsiyonel)
-- Dogru kelimeye reaksiyon birakma (opsiyonel)
-- Oyun disi mesajlar icin kacis karakteri ozellestirme
-- Reaksiyon emojisi ozellestirme
-- Kelime basina puan ayari
-- Seviye atlama puan esigi ayari
-- Turun kac kelimede sifirlanacagi ayari
-- Ayni kullanicinin ust uste oynayabilmesi ayari
-- Tur sifirlandiginda herkese acik tur liderligi duyurusu
-- Sunucuya ozel toplam puan, gunluk, haftalik ve seviye liderlik tablolari
-- Seviye komutu sonucu sadece komutu kullanan kisiye gorunur (ephemeral)
+- Botu ekle: https://discord.com/api/oauth2/authorize?client_id=1490789485959450814&scope=bot%20applications.commands&permissions=355392
+- Destek sunucusu: https://discord.gg/PvRAkwhfXq
+- Açık kaynak kod: https://github.com/YigitCahit/Lugat-Kelime-Oyunu-Botu
+
+## Özellikler
+
+- Sunucuya özel ayarlar
+- Yanlış kelime mesajını silme (opsiyonel)
+- Yanlış kelime uyarısı gönderme (opsiyonel)
+- Doğru kelimeye reaksiyon bırakma (opsiyonel)
+- Oyun dışı mesajlar için kaçış karakteri özelleştirme
+- Reaksiyon emojisi özelleştirme
+- Kelime başına puan ayarı
+- Seviye atlama puan eşiği ayarı
+- Turun kaç kelimede sıfırlanacağı ayarı
+- Aynı kullanıcının üst üste oynayabilmesi ayarı
+- Tur sıfırlandığında herkese açık tur liderliği duyurusu
+- Sunucuya özel toplam puan, günlük, haftalık ve seviye liderlik tabloları
+- Seviye komutu sonucu sadece komutu kullanan kişiye görünür (ephemeral)
 
 ## Gereksinimler
 
 - Python 3.10+
 - MySQL 8+
-- Discord Developer Portal uzerinde olusturulmus bot
+- Discord Developer Portal üzerinde oluşturulmuş bot
 
 ## Kurulum
 
-1. Paketleri yukleyin:
+1. Paketleri yükleyin:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. MySQL'de bir veritabani olusturun:
+2. MySQL'de bir veritabanı oluşturun:
 
 ```sql
 CREATE DATABASE kelime_botu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-3. `.env.example` dosyasini `.env` olarak kopyalayip doldurun:
+3. `.env.example` dosyasını `.env` olarak kopyalayıp doldurun:
 
 - `DISCORD_TOKEN`
 - `MYSQL_HOST`
@@ -51,11 +58,11 @@ CREATE DATABASE kelime_botu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 - `MYSQL_USER`
 - `MYSQL_PASSWORD`
 - `MYSQL_DATABASE`
-- `WORD_LIST_DIR` (varsayilan: `Kelime-Listesi`)
+- `WORD_LIST_DIR` (varsayılan: `Kelime-Listesi`)
 
-4. Discord botunuzda **Message Content Intent** acik olsun.
+4. Discord botunuzda **Message Content Intent** açık olsun.
 
-5. Botu calistirin:
+5. Botu çalıştırın:
 
 ```bash
 python main.py
@@ -63,7 +70,7 @@ python main.py
 
 ## Komutlar
 
-### Ayar Komutlari (yonetici)
+### Ayar Komutları (yönetici)
 - `/ayar_goster`
 - `/ayar_kanal`
 - `/ayar_yanlis_sil`
@@ -76,21 +83,21 @@ python main.py
 - `/ayar_sifirlama_kelimesi`
 - `/ayar_ardisik_oyun`
 
-### Oyun Komutlari
+### Oyun Komutları
 - `/oyun_durum`
 - `/oyun_sifirla`
 
 ### Profil / Liderlik
 - `/seviye` (ephemeral)
-- `/liderlik` (`puan`, `seviye`, `gunluk`, `haftalik` secenekleri)
+- `/liderlik` (`puan`, `seviye`, `gunluk`, `haftalik` seçenekleri)
 
-### Yardim
+### Yardım
 - `/yardim`
 
 ## Notlar
 
-- Kelime listeleri `Kelime-Listesi` klasorundeki `.list` ve `.txt` dosyalarindan yuklenir.
-- Her sunucunun ayarlari ve istatistikleri birbirinden bagimsiz tutulur.
-- Tur sifirlamada o turun liderligi herkese acik olarak duyurulur.
-- Oyun kanalinda bir mesaji oyuna dahil etmeden yazmak icin mesajin basina kacis karakterini ekleyebilirsin.
-- Varsayilan kacis karakteri `\\` olup `/ayar_kacis_karakteri` ile degistirilebilir.
+- Kelime listeleri `Kelime-Listesi` klasöründeki `.list` ve `.txt` dosyalarından yüklenir.
+- Her sunucunun ayarları ve istatistikleri birbirinden bağımsız tutulur.
+- Tur sıfırlamada o turun liderliği herkese açık olarak duyurulur.
+- Oyun kanalında bir mesajı oyuna dahil etmeden yazmak için mesajın başına kaçış karakterini ekleyebilirsin.
+- Varsayılan kaçış karakteri `\\` olup `/ayar_kacis_karakteri` ile değiştirilebilir.
