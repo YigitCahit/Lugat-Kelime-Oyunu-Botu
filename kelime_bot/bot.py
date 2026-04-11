@@ -143,6 +143,42 @@ class WordGameCog(commands.Cog):
             f"Sıradaki kelime '{starter_word[-1]}' harfi ile başlamalı."
         )
 
+    async def _send_auto_word_after_soft_g(
+        self,
+        guild_id: int,
+        target_channel: discord.TextChannel,
+    ) -> None:
+        max_attempts = min(100, max(1, self.word_bank.size))
+
+        for _ in range(max_attempts):
+            auto_word = self.word_bank.random_word()
+
+            if auto_word[-1] == "ğ":
+                continue
+
+            try:
+                await self.db.record_system_word(guild_id, auto_word)
+            except ValueError:
+                continue
+
+            try:
+                await target_channel.send(
+                    "Kelime 'ğ' ile bittiği için bot otomatik kelime verdi: "
+                    f"**{auto_word}**\n"
+                    f"Sıradaki kelime '{auto_word[-1]}' harfi ile başlamalı."
+                )
+            except (discord.Forbidden, discord.HTTPException):
+                pass
+
+            return
+
+        try:
+            await target_channel.send(
+                "Kelime 'ğ' ile bitti ama otomatik yeni kelime bulunamadı."
+            )
+        except (discord.Forbidden, discord.HTTPException):
+            pass
+
     async def _process_message(self, message: discord.Message) -> None:
         if message.guild is None:
             return
@@ -236,6 +272,13 @@ class WordGameCog(commands.Cog):
                 target_channel=message.channel,
                 round_id=int(result["round_id"]),
                 trigger_text="Maksimum kelime sayısına ulaşıldı.",
+            )
+            return
+
+        if normalized[-1] == "ğ" and isinstance(message.channel, discord.TextChannel):
+            await self._send_auto_word_after_soft_g(
+                guild_id=message.guild.id,
+                target_channel=message.channel,
             )
 
     @commands.Cog.listener()

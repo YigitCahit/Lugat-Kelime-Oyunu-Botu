@@ -433,6 +433,59 @@ class Database:
             "expected_start_char": word[-1],
         }
 
+    async def record_system_word(self, guild_id: int, word: str) -> dict[str, Any]:
+        await self.ensure_guild(guild_id)
+        pool = self._require_pool()
+
+        async with pool.acquire() as conn:
+            try:
+                await conn.begin()
+                async with conn.cursor(aiomysql.DictCursor) as cursor:
+                    await cursor.execute(
+                        "SELECT current_round, words_in_round FROM game_state WHERE guild_id = %s FOR UPDATE",
+                        (guild_id,),
+                    )
+                    state = await cursor.fetchone()
+                    if state is None:
+                        raise RuntimeError("Oyun durumu bulunamadi.")
+
+                    round_id = int(state["current_round"])
+                    words_in_round = int(state["words_in_round"])
+
+                    await cursor.execute(
+                        """
+                        INSERT INTO word_entries (guild_id, round_id, user_id, word, points)
+                        VALUES (%s, %s, 0, %s, 0)
+                        """,
+                        (guild_id, round_id, word),
+                    )
+
+                    await cursor.execute(
+                        """
+                        UPDATE game_state
+                        SET words_in_round = %s,
+                            expected_start_char = %s,
+                            last_word = %s,
+                            last_player_id = NULL
+                        WHERE guild_id = %s
+                        """,
+                        (words_in_round, word[-1], word, guild_id),
+                    )
+
+                await conn.commit()
+            except aiomysql.IntegrityError as error:
+                await conn.rollback()
+                raise ValueError("Bu kelime bu turda zaten kullanildi.") from error
+            except Exception:
+                await conn.rollback()
+                raise
+
+        return {
+            "round_id": round_id,
+            "words_in_round": words_in_round,
+            "expected_start_char": word[-1],
+        }
+
     async def get_round_leaderboard(
         self,
         guild_id: int,
