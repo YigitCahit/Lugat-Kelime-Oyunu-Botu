@@ -163,7 +163,6 @@ class WordGameCog(commands.Cog):
 
             try:
                 await target_channel.send(
-                    "Kelime 'ğ' ile bittiği için bot otomatik kelime verdi: "
                     f"**{auto_word}**\n"
                     f"Sıradaki kelime '{auto_word[-1]}' harfi ile başlamalı."
                 )
