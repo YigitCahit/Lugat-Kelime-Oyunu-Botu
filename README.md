@@ -26,6 +26,7 @@ Kurallar:
 - Seviye atlama puan eşiği ayarı
 - Turun kaç kelimede sıfırlanacağı ayarı
 - Aynı kullanıcının üst üste oynayabilmesi ayarı
+- Sunucuya özel yetkili rol tanımlama (yönetim komutlarını kullanabilme)
 - Tur sıfırlandığında herkese açık tur liderliği duyurusu
 - Sunucuya özel toplam puan, günlük, haftalık ve seviye liderlik tabloları
 - Seviye komutu sonucu sadece komutu kullanan kişiye görünür (ephemeral)
@@ -82,6 +83,9 @@ python main.py
 - `/ayar_seviye_puani`
 - `/ayar_sifirlama_kelimesi`
 - `/ayar_ardisik_oyun`
+
+### Yetki Rolü Komutu (sadece Sunucuyu Yönet)
+- `/ayar_yetkili_rol` (`ekle` / `cikar`)
 
 ### Oyun Komutları
 - `/oyun_durum`

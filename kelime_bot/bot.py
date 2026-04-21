@@ -45,7 +45,11 @@ class WordGameCog(commands.Cog):
             )
         return False
 
-    async def _ensure_manage_guild(self, interaction: discord.Interaction) -> bool:
+    async def _ensure_manage_guild(
+        self,
+        interaction: discord.Interaction,
+        allow_delegated_role: bool = True,
+    ) -> bool:
         if not await self._ensure_guild_interaction(interaction):
             return False
 
@@ -55,7 +59,22 @@ class WordGameCog(commands.Cog):
         if interaction.user.guild_permissions.manage_guild:
             return True
 
+        delegated_role_id: int | None = None
+        if allow_delegated_role:
+            guild_id = interaction.guild_id
+            if guild_id is None:
+                return False
+
+            settings = await self.db.get_settings(guild_id)
+            delegated_role_id = settings["privileged_role_id"]
+            if delegated_role_id is not None:
+                if any(role.id == delegated_role_id for role in interaction.user.roles):
+                    return True
+
         message = "Bu komut için 'Sunucuyu Yönet' izni gerekiyor."
+        if allow_delegated_role and delegated_role_id is not None:
+            message = "Bu komut için 'Sunucuyu Yönet' izni veya yetkili rol gerekiyor."
+
         if interaction.response.is_done():
             await interaction.followup.send(message, ephemeral=True)
         else:
@@ -90,6 +109,11 @@ class WordGameCog(commands.Cog):
             if settings["game_channel_id"]
             else "Ayarlanmadı"
         )
+        privileged_role_display = (
+            f"<@&{settings['privileged_role_id']}>"
+            if settings["privileged_role_id"]
+            else "Ayarlanmadı"
+        )
 
         return (
             f"Kanal: {channel_display}\n"
@@ -101,7 +125,8 @@ class WordGameCog(commands.Cog):
             f"Kelime puanı: {settings['points_per_word']}\n"
             f"Seviye atlama puanı: {settings['level_up_points']}\n"
             f"Sıfırlama kelime sayısı: {settings['reset_after_words']}\n"
-            f"Aynı kişi arka arkaya oynayabilir: {'Evet' if settings['allow_consecutive_turns'] else 'Hayır'}"
+            f"Aynı kişi arka arkaya oynayabilir: {'Evet' if settings['allow_consecutive_turns'] else 'Hayır'}\n"
+            f"Yönetim yetkili rolü: {privileged_role_display}"
         )
 
     async def _publish_round_results_and_reset(
@@ -514,6 +539,82 @@ class WordGameCog(commands.Cog):
         )
 
     @app_commands.command(
+        name="ayar_yetkili_rol",
+        description="Yönetim komutlarını kullanabilecek rolü ekler veya çıkarır.",
+    )
+    @app_commands.describe(
+        islem="Rol ekleme veya çıkarma işlemi",
+        rol="Yetki verilecek veya kaldırılacak rol",
+    )
+    @app_commands.choices(
+        islem=[
+            app_commands.Choice(name="Ekle", value="ekle"),
+            app_commands.Choice(name="Çıkar", value="cikar"),
+        ]
+    )
+    async def ayar_yetkili_rol(
+        self,
+        interaction: discord.Interaction,
+        islem: app_commands.Choice[str],
+        rol: discord.Role | None = None,
+    ) -> None:
+        if not await self._ensure_manage_guild(interaction, allow_delegated_role=False):
+            return
+
+        guild_id = interaction.guild_id
+        if guild_id is None:
+            return
+
+        if islem.value == "ekle":
+            if rol is None:
+                await interaction.response.send_message(
+                    "Rol eklemek için bir rol seçmelisin.",
+                    ephemeral=True,
+                )
+                return
+
+            if rol.is_default():
+                await interaction.response.send_message(
+                    "@everyone rolü yetkili rol olarak ayarlanamaz.",
+                    ephemeral=True,
+                )
+                return
+
+            await self.db.update_setting(guild_id, "privileged_role_id", rol.id)
+            await interaction.response.send_message(
+                f"{rol.mention} rolü yönetim komutları için yetkilendirildi.",
+                ephemeral=True,
+            )
+            return
+
+        settings = await self.db.get_settings(guild_id)
+        current_role_id = settings["privileged_role_id"]
+        if current_role_id is None:
+            await interaction.response.send_message(
+                "Bu sunucu için tanımlı bir yetkili rol yok.",
+                ephemeral=True,
+            )
+            return
+
+        if rol is not None and rol.id != current_role_id:
+            await interaction.response.send_message(
+                "Seçtiğin rol, yetkili rol olarak tanımlı değil.",
+                ephemeral=True,
+            )
+            return
+
+        await self.db.update_setting(guild_id, "privileged_role_id", None)
+
+        guild = interaction.guild
+        removed_role = guild.get_role(current_role_id) if guild is not None else None
+        removed_text = removed_role.mention if removed_role is not None else f"<@&{current_role_id}>"
+
+        await interaction.response.send_message(
+            f"{removed_text} rolünün yönetim komutu yetkisi kaldırıldı.",
+            ephemeral=True,
+        )
+
+    @app_commands.command(
         name="oyun_durum",
         description="Aktif turun durumunu gösterir.",
     )
@@ -705,6 +806,7 @@ class WordGameCog(commands.Cog):
             "- /ayar_seviye_puani\n"
             "- /ayar_sifirlama_kelimesi\n"
             "- /ayar_ardisik_oyun\n"
+            "- /ayar_yetkili_rol\n"
             "- /oyun_durum\n"
             "- /oyun_sifirla\n"
             "- /seviye (ephemeral)\n"

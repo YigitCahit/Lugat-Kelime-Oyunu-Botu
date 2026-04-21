@@ -53,6 +53,7 @@ class Database:
                 level_up_points INT NOT NULL DEFAULT 100,
                 reset_after_words INT NOT NULL DEFAULT 50,
                 allow_consecutive_turns BOOLEAN NOT NULL DEFAULT FALSE,
+                privileged_role_id BIGINT NULL,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -116,6 +117,17 @@ class Database:
                         """
                     )
 
+                await cursor.execute("SHOW COLUMNS FROM guild_settings LIKE 'privileged_role_id'")
+                column = await cursor.fetchone()
+                if column is None:
+                    await cursor.execute(
+                        """
+                        ALTER TABLE guild_settings
+                        ADD COLUMN privileged_role_id BIGINT NULL
+                        AFTER allow_consecutive_turns
+                        """
+                    )
+
     async def _fetchone(self, query: str, params: tuple[Any, ...] = ()) -> dict[str, Any] | None:
         pool = self._require_pool()
         async with pool.acquire() as conn:
@@ -168,6 +180,7 @@ class Database:
             "level_up_points": int(row["level_up_points"]),
             "reset_after_words": int(row["reset_after_words"]),
             "allow_consecutive_turns": bool(row["allow_consecutive_turns"]),
+            "privileged_role_id": int(row["privileged_role_id"]) if row["privileged_role_id"] else None,
         }
 
     async def update_setting(self, guild_id: int, column: str, value: Any) -> None:
@@ -182,6 +195,7 @@ class Database:
             "level_up_points",
             "reset_after_words",
             "allow_consecutive_turns",
+            "privileged_role_id",
         }
 
         if column not in allowed_columns:
