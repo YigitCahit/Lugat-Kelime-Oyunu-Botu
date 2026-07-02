@@ -839,8 +839,13 @@ class KelimeBot(commands.Bot):
     async def on_ready(self) -> None:
         LOGGER.info("Bot hazır: %s", self.user)
 
-        act_type = getattr(discord.ActivityType, self.action_type_str.lower(), discord.ActivityType.playing)
-        bot_activity = discord.Activity(type=act_type, name=self.action_text)
+        action_type = self.action_type_str.lower()
+
+        if action_type == "custom":
+            bot_activity = discord.CustomActivity(name=self.action_text)
+        else:
+            act_type = getattr(discord.ActivityType, action_type, discord.ActivityType.playing)
+            bot_activity = discord.Activity(type=act_type, name=self.action_text)
         await self.change_presence(activity=bot_activity)
 
     async def close(self) -> None:
