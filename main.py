@@ -29,7 +29,7 @@ def main() -> None:
     logging.getLogger(__name__).info("Kelime bankasi yuklendi: %s", word_bank.size)
 
     database = Database(config.mysql)
-    bot = KelimeBot(db=database, word_bank=word_bank)
+    bot = KelimeBot(db=database, word_bank=word_bank, activity_type=config.activity_type, activity_text=config.activity_text)
     bot.run(config.discord_token)
 
 

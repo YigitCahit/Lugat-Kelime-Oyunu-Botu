@@ -19,6 +19,9 @@ class BotConfig:
     discord_token: str
     mysql: MySQLConfig
     word_list_dir: Path
+    status: str
+    activity_type: str
+    activity_text: str
 
     @classmethod
     def from_env(cls) -> "BotConfig":
@@ -36,8 +39,11 @@ class BotConfig:
 
         project_root = Path(__file__).resolve().parent.parent
         list_dir_env = os.getenv("WORD_LIST_DIR", "Kelime-Listesi").strip()
+        status = os.getenv("BOT_STATUS", "Kelime Oyunu Botu").strip()
+        activity_type = os.getenv("BOT_ACTIVITY_TYPE", "Playing").strip().lower()
+        activity_text = os.getenv("BOT_ACTIVITY_TEXT", "Kelime Oyunu").strip()
         word_list_dir = Path(list_dir_env)
         if not word_list_dir.is_absolute():
             word_list_dir = (project_root / word_list_dir).resolve()
 
-        return cls(discord_token=token, mysql=mysql, word_list_dir=word_list_dir)
+        return cls(discord_token=token, mysql=mysql, word_list_dir=word_list_dir, status=status, activity_type=activity_type, activity_text=activity_text)

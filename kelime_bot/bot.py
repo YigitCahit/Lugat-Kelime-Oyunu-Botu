@@ -816,7 +816,7 @@ class WordGameCog(commands.Cog):
 
 
 class KelimeBot(commands.Bot):
-    def __init__(self, db: Database, word_bank: WordBank) -> None:
+    def __init__(self, db: Database, word_bank: WordBank, activity_type: str, activity_text: str) -> None:
         intents = discord.Intents.default()
         intents.message_content = True
         intents.guilds = True
@@ -825,6 +825,9 @@ class KelimeBot(commands.Bot):
 
         self.db = db
         self.word_bank = word_bank
+        
+        self.action_type_str = activity_type 
+        self.action_text = activity_text
 
     async def setup_hook(self) -> None:
         await self.db.connect()
@@ -835,6 +838,10 @@ class KelimeBot(commands.Bot):
 
     async def on_ready(self) -> None:
         LOGGER.info("Bot hazır: %s", self.user)
+
+        act_type = getattr(discord.ActivityType, self.action_type_str.lower(), discord.ActivityType.playing)
+        bot_activity = discord.Activity(type=act_type, name=self.action_text)
+        await self.change_presence(activity=bot_activity)
 
     async def close(self) -> None:
         await self.db.close()
