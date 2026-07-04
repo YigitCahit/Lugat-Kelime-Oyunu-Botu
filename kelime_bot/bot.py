@@ -796,6 +796,18 @@ class WordGameCog(commands.Cog):
     )
     async def yardim(self, interaction: discord.Interaction) -> None:
         embed = discord.Embed(title="Kelime Oyunu Yardım", color=discord.Color.teal())
+        embed.add_field(
+            name="Gizlilik Politikası",
+            value=(
+                "https://lugat.mcyigit.tech/gizlilik-politikasi.html"
+            ),
+        )
+        embed.add_field(
+            name="Kullanım Koşulları",
+            value=(
+                "https://lugat.mcyigit.tech/kullanim-sartlari.html"
+            ),
+        )
         embed.description = (
             "Temel komutlar:\n"
             "- /ayar_goster\n"
