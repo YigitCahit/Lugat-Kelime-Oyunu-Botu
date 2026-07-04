@@ -637,6 +637,7 @@ class WordGameCog(commands.Cog):
         embed.add_field(name="Tur", value=str(state["current_round"]), inline=True)
         embed.add_field(name="Turdaki Kelime", value=str(state["words_in_round"]), inline=True)
         embed.add_field(name="Beklenen Baş Harf", value=str(expected), inline=True)
+        embed.set_footer(text="Destekle: Ko-Fi.com/YigitCahit")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(
@@ -719,6 +720,7 @@ class WordGameCog(commands.Cog):
         )
         embed.add_field(name="Puan Sırası", value=f"#{profile['points_rank']}", inline=True)
         embed.add_field(name="Seviye Sırası", value=f"#{profile['level_rank']}", inline=True)
+        embed.set_footer(text="Destekle: Ko-Fi.com/YigitCahit")
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -782,6 +784,7 @@ class WordGameCog(commands.Cog):
                     )
 
             embed.description = "\n".join(lines)
+            embed.set_footer(text="Destekle: Ko-Fi.com/YigitCahit")
 
         # Seviye komutlarını sadece komutu kullanan kişi görür.
         ephemeral = board_type == "seviye"
@@ -812,6 +815,7 @@ class WordGameCog(commands.Cog):
             "- /seviye (ephemeral)\n"
             "- /liderlik"
         )
+        embed.set_footer(text="Destekle: Ko-Fi.com/YigitCahit")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
