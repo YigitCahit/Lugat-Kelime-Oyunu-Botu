@@ -795,39 +795,79 @@ class WordGameCog(commands.Cog):
         description="Kelime oyunu komutlarının kısa özetini gösterir.",
     )
     async def yardim(self, interaction: discord.Interaction) -> None:
-        embed = discord.Embed(title="Kelime Oyunu Yardım", color=discord.Color.teal())
-        embed.add_field(
-            name="Gizlilik Politikası",
-            value=(
-                "https://lugat.mcyigit.tech/gizlilik-politikasi.html"
+        embed = discord.Embed(
+            title="Kelime Oyunu Yardım Menüsü",
+            description=(
+                "Bu bot ile sunucunda bir **kelime zinciri** oyunu oynayabilirsin. "
+                "Oyun kanalına yazılan her kelime, bir önceki kelimenin son harfiyle "
+                "başlamalı. Aşağıda tüm komutları kategorilerine göre bulabilirsin.\n\u200b"
             ),
+            color=discord.Color.teal(),
         )
+
         embed.add_field(
-            name="Kullanım Koşulları",
+            name="Oyuncu Komutları",
             value=(
-                "https://lugat.mcyigit.tech/kullanim-sartlari.html"
+                "`/seviye` — Kendi (veya başka bir üyenin) seviye ve puan bilgini gösterir. *(yalnızca sana görünür)*\n"
+                "`/liderlik` — Sunucu liderlik tablosunu gösterir (Toplam Puan / Seviye / Günlük / Haftalık).\n"
+                "`/oyun_durum` — Aktif turun durumunu, kalan kelime sayısını ve beklenen harfi gösterir."
             ),
+            inline=False,
         )
-        embed.description = (
-            "Temel komutlar:\n"
-            "- /ayar_goster\n"
-            "- /ayar_kanal\n"
-            "- /ayar_yanlis_sil\n"
-            "- /ayar_uyari\n"
-            "- /ayar_dogru_reaksiyon\n"
-            "- /ayar_reaksiyon_emoji\n"
-            "- /ayar_kacis_karakteri\n"
-            "- /ayar_kelime_puani\n"
-            "- /ayar_seviye_puani\n"
-            "- /ayar_sifirlama_kelimesi\n"
-            "- /ayar_ardisik_oyun\n"
-            "- /ayar_yetkili_rol\n"
-            "- /oyun_durum\n"
-            "- /oyun_sifirla\n"
-            "- /seviye (ephemeral)\n"
-            "- /liderlik"
+
+        embed.add_field(
+            name="Yönetim Komutları",
+            value=(
+                "*(Bu komutlar 'Sunucuyu Yönet' izni veya yetkili rol gerektirir)*\n"
+                "`/ayar_goster` — Mevcut tüm sunucu ayarlarını listeler.\n"
+                "`/ayar_kanal` — Oyunun oynanacağı kanalı belirler.\n"
+                "`/oyun_sifirla` — Mevcut turu bitirir, liderliği paylaşır ve yeni tur başlatır."
+            ),
+            inline=False,
         )
-        embed.set_footer(text="Destekle: Ko-Fi.com/YigitCahit")
+
+        embed.add_field(
+            name="Oyun Kuralları Ayarları",
+            value=(
+                "`/ayar_yanlis_sil` — Yanlış kelime mesajlarının otomatik silinmesini açar/kapatır.\n"
+                "`/ayar_uyari` — Yanlış kelimede uyarı mesajı gönderimini açar/kapatır.\n"
+                "`/ayar_dogru_reaksiyon` — Doğru kelimelere emoji reaksiyonu bırakılmasını açar/kapatır.\n"
+                "`/ayar_reaksiyon_emoji` — Doğru kelimeye bırakılacak emojiyi belirler.\n"
+                "`/ayar_kacis_karakteri` — Oyun dışı sohbet için kaçış karakterini belirler (örn. `\\`).\n"
+                "`/ayar_ardisik_oyun` — Aynı kişinin art arda oynayıp oynayamayacağını belirler."
+            ),
+            inline=False,
+        )
+
+        embed.add_field(
+            name="Puan & Seviye Ayarları",
+            value=(
+                "`/ayar_kelime_puani` — Doğru kelime başına verilecek puanı belirler.\n"
+                "`/ayar_seviye_puani` — Bir seviye atlamak için gereken puanı belirler.\n"
+                "`/ayar_sifirlama_kelimesi` — Kaç kelime sonra turun otomatik sıfırlanacağını belirler."
+            ),
+            inline=False,
+        )
+
+        embed.add_field(
+            name="Yetki Yönetimi",
+            value=(
+                "`/ayar_yetkili_rol` — 'Sunucuyu Yönet' izni olmayan üyelere, "
+                "seçtiğin bir rol üzerinden yönetim komutu kullanma izni verir veya kaldırır."
+            ),
+            inline=False,
+        )
+
+        embed.add_field(
+            name="Yasal & Bağlantılar",
+            value=(
+                "[Gizlilik Politikası](https://lugat.mcyigit.tech/gizlilik-politikasi.html) • "
+                "[Kullanım Koşulları](https://lugat.mcyigit.tech/kullanim-sartlari.html)"
+            ),
+            inline=False,
+        )
+
+        embed.set_footer(text="💛 Botu desteklemek ister misin? Ko-Fi.com/YigitCahit")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
