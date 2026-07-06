@@ -27,6 +27,8 @@ jobs:
           echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
           echo "WORD_LIST_DIR=${{ secrets.WORD_LIST_DIR }}" >> .env
+          echo "BOT_ACTIVITY_TYPE=${{ secrets.BOT_ACTIVITY_TYPE }}" >> .env
+          echo "BOT_ACTIVITY_TEXT=${{ secrets.BOT_ACTIVITY_TEXT }}" >> .env
 
           source venv/bin/activate
           sudo systemctl restart kelime-bot.service
